@@ -1,0 +1,32 @@
+.window-container {
+  display: flex;
+  height: calc(100vh - 48px);
+  position: relative;
+  border: 1px solid #82c91e;
+}
+
+.window {
+  border-right: 1px solid #ccc;
+  padding: 8px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-content {
+  flex: 1;
+  padding: 8px;
+  overflow: auto;
+  border: 1px solid #37b24d;
+}
+
+.resize-handle {
+  width: 6px;
+  background: #212529;
+  cursor: col-resize;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
