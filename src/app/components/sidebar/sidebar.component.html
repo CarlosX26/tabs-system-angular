@@ -1,9 +1,0 @@
-<div class="sidebar" *ngIf="sidebarVisible" (click)="closeSidebar()">
-  <div class="sidebar-content" (click)="preventClose($event)">
-    <ul>
-      <li *ngFor="let tab of tabs" (click)="openTab(tab)">
-        <p>{{ tab.title }}</p>
-      </li>
-    </ul>
-  </div>
-</div>

@@ -2,12 +2,12 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
-import { TabsComponent } from './components/tabs/tabs.component';
-import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { DragAndDropModule } from 'angular-draggable-droppable';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
-  declarations: [AppComponent, TabsComponent, SidebarComponent],
-  imports: [BrowserModule],
+  declarations: [AppComponent],
+  imports: [BrowserModule, DragAndDropModule, BrowserAnimationsModule],
   providers: [],
   bootstrap: [AppComponent],
 })

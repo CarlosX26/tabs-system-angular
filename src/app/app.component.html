@@ -1,13 +1,78 @@
-<app-tabs></app-tabs>
+<!--
 <div class="window-container">
   <div
     class="window"
-    *ngFor="let tab of tabsService.openTabs"
+    *ngFor="let tab of tabsService.openTabs; let i = index"
     [ngStyle]="{ 'flex-basis': tab.size }"
   >
     <div class="tab-content">
       {{ tab.content }}
     </div>
-    <div class="resize-handle" (mousedown)="onResizeStart($event, tab)"></div>
+    <div
+      *ngIf="i === 0 && tabsService.openTabs.length > 1"
+      class="resize-handle"
+      (mousedown)="onResizeStart($event, tab)"
+    ></div>
   </div>
+</div> -->
+
+<!--
+new version with angular draggable
+-->
+
+<ul>
+  <li
+    *ngFor="let item of tabsOpened; let i = index"
+    mwlDraggable
+    [dropData]="item"
+    dragActiveClass="drag-active"
+    (dragStart)="dragStart(i)"
+    (dragEnd)="dragEnd()"
+    mwlDroppable
+    (drop)="dropTab(i)"
+  >
+    <!-- [touchStartLongPress]="{ delay: 300, delta: 30 }" -->
+    {{ item.title | lowercase }}
+  </li>
+</ul>
+
+<div class="window-container" *ngIf="tabInView.length === 1">
+  <div class="window" [ngStyle]="{ 'flex-basis': tabInView[0].size }">
+    <div class="tab-content">
+      {{ tabInView[0].content }}
+    </div>
+  </div>
+</div>
+
+<div class="window-container" *ngIf="tabInView.length > 1">
+  <div
+    class="window"
+    *ngFor="let tab of tabInView"
+    [ngStyle]="{ 'flex-basis': tab.size }"
+  >
+    <div class="tab-content">
+      {{ tab.content }}
+    </div>
+  </div>
+</div>
+
+<div class="drop-zone" *ngIf="showDropZone">
+  <div
+    mwlDroppable
+    (drop)="onDropLeft($event)"
+    dragOverClass="drop-over-active"
+  ></div>
+
+  <div
+    class="drop-zone-center"
+    mwlDroppable
+    (drop)="onDropCenter($event)"
+    dragOverClass="drop-over-active"
+  ></div>
+
+  <div
+    mwlDroppable
+    (drop)="onDropRight($event)"
+    dragOverClass="drop-over-active"
+  ></div>
 </div>

@@ -1,6 +1,6 @@
 .window-container {
   display: flex;
-  height: calc(100vh - 48px);
+  height: calc(100vh - 40px);
   position: relative;
   border: 1px solid #82c91e;
 }
@@ -21,12 +21,72 @@
   border: 1px solid #37b24d;
 }
 
-.resize-handle {
-  width: 6px;
-  background: #212529;
-  cursor: col-resize;
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
+:host {
+  display: flex;
+  flex-direction: column;
 }
+
+ul {
+  display: flex;
+  width: 100%;
+
+  background-color: #dee2e6;
+  height: 40px;
+
+  & > li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: #dee2e6;
+    padding: 8px 16px;
+    cursor: grab;
+    list-style: none;
+  }
+  & > li:hover {
+    background-color: #fff;
+  }
+}
+
+.drop-zone {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: fixed;
+  height: calc(100vh - 40px);
+  display: flex;
+  justify-content: space-between;
+
+  & > div {
+    width: 40%;
+  }
+}
+
+.drop-zone-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  width: 400px;
+  height: 400px;
+}
+
+.drop-over-active {
+  border: dashed 1px #343a40;
+  background-color: #4271d73b;
+}
+
+.drag-active {
+  z-index: 3;
+}
+
+// .resize-handle {
+//   width: 6px;
+//   background: #212529;
+//   cursor: col-resize;
+//   position: absolute;
+//   right: 0;
+//   top: 0;
+//   bottom: 0;
+// }
