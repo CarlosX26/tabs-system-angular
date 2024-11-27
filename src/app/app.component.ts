@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { DropEvent } from 'angular-draggable-droppable';
 
 interface ITab {
@@ -14,11 +14,7 @@ interface ITab {
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  droppedDataLeft!: ITab;
-  droppedDataCenter!: ITab;
-  droppedDataRight!: ITab;
-
-  tabsOpened: ITab[] = [
+  tabs: ITab[] = [
     {
       id: 0,
       title: 'Tab 1',
@@ -43,13 +39,64 @@ export class AppComponent {
       content: 'Conteúdo tab 4',
       size: '100%',
     },
+    {
+      id: 4,
+      title: 'Tab 5',
+      content: 'Conteúdo tab 5',
+      size: '100%',
+    },
+    {
+      id: 5,
+      title: 'Tab 6',
+      content: 'Conteúdo tab 6',
+      size: '100%',
+    },
   ];
 
-  tabInView: ITab[] = [this.tabsOpened[0]];
+  tabsOpened: ITab[] = [];
+
+  tabInView: ITab[] = [];
 
   showDropZone = false;
 
   dragStartIndex!: number | undefined;
+
+  isResizing = false;
+  startX = 0;
+  startWidth = 0;
+
+  resizeTabs(event: MouseEvent) {
+    this.isResizing = true;
+    this.startX = event.clientX;
+    this.startWidth = 50;
+    event.preventDefault();
+  }
+
+  @HostListener('window:mousemove', ['$event'])
+  onMouseMove(event: MouseEvent) {
+    if (!this.isResizing) return;
+
+    const deltaX = ((event.clientX - this.startX) / window.innerWidth) * 100;
+
+    const newWidth = Math.round(this.startWidth + deltaX);
+    const remainingWidth = Math.round(100 - newWidth);
+
+    if (newWidth > 10 && remainingWidth > 10) {
+      this.tabInView[0].size = `${newWidth}%`;
+      this.tabInView[1].size = `${remainingWidth}%`;
+    }
+  }
+
+  @HostListener('window:mouseup')
+  onMouseUp() {
+    console.log({
+      tabs: this.tabs,
+      tabInView: this.tabInView,
+      tabsOpened: this.tabsOpened,
+    });
+
+    this.isResizing = false;
+  }
 
   reorderTabs(lastPosition: number, newPosition: number) {
     const newArray = this.tabsOpened.slice();
@@ -62,14 +109,11 @@ export class AppComponent {
   }
 
   dragStart(index: number) {
-    console.log('🚀 ~ AppComponent ~ dragStart ~ index:', index);
-    console.log('start drag');
     this.dragStartIndex = index;
     this.showDropZone = true;
   }
 
   dragEnd() {
-    console.log('end drag');
     setTimeout(() => {
       this.showDropZone = false;
       this.dragStartIndex = undefined;
@@ -80,78 +124,59 @@ export class AppComponent {
     this.reorderTabs(this.dragStartIndex!, index);
   }
 
+  openTab(tab: ITab) {
+    this.tabInView = [{ ...tab }];
+  }
+
+  openTabSidebar(tab: ITab) {
+    const tabIndexInOpened = this.tabsOpened.findIndex((t) => t.id === tab.id);
+
+    this.tabInView = [{ ...tab }];
+
+    if (tabIndexInOpened === -1) {
+      this.tabsOpened = [...this.tabsOpened, { ...tab }];
+    }
+  }
+
+  closeTab(tab: ITab) {
+    this.tabsOpened = this.tabsOpened.filter((t) => t.id !== tab.id);
+
+    const tabIndexInView = this.tabInView.findIndex((t) => t.id === tab.id);
+
+    if (tabIndexInView !== -1) {
+      this.tabInView = this.tabInView.filter((t) => t.id !== tab.id);
+    }
+
+    if (this.tabInView.length === 1) {
+      const currentTab = this.tabInView[0];
+      this.tabInView = [{ ...currentTab, size: '100%' }];
+    }
+  }
+
   onDropLeft({ dropData }: DropEvent<ITab>): void {
-    this.droppedDataLeft = dropData;
+    const tab = { ...dropData };
 
     if (this.tabInView.length === 2) {
-      this.tabInView[0] = this.droppedDataLeft;
+      this.tabInView[0] = tab;
       return;
     }
 
-    this.tabInView.unshift(this.droppedDataLeft);
-    console.log(this.tabInView);
-    console.log(
-      '🚀 ~ AppComponent ~ onDropLeft ~ droppedDataLeft:',
-      this.droppedDataLeft
-    );
+    this.tabInView.unshift(tab);
   }
 
   onDropCenter({ dropData }: DropEvent<ITab>): void {
-    this.droppedDataCenter = dropData;
+    const tab = { ...dropData };
 
-    this.tabInView = [this.droppedDataCenter];
-
-    console.log(this.tabInView);
-    console.log(
-      '🚀 ~ AppComponent ~ onDropLeft ~ droppedDataLeft:',
-      this.droppedDataLeft
-    );
+    this.tabInView = [tab];
   }
 
   onDropRight({ dropData }: DropEvent<ITab>): void {
-    console.log('🚀 ~ AppComponent ~ onDropRight ~ dropData:', dropData);
-    this.droppedDataRight = dropData;
+    const tab = { ...dropData };
     if (this.tabInView.length === 2) {
-      this.tabInView[1] = this.droppedDataRight;
+      this.tabInView[1] = tab;
       return;
     }
-    this.tabInView.push(this.droppedDataRight);
-    console.log(this.tabInView);
-    console.log(
-      '🚀 ~ AppComponent ~ onDropRight ~ droppedDataRight:',
-      this.droppedDataRight
-    );
+
+    this.tabInView.push(tab);
   }
 }
-// export class AppComponent {
-//   resizingTab: any = null;
-//   startX = 0;
-//   startSize = 0;
-
-//   constructor(public tabsService: TabsService) {}
-
-//   onResizeStart(event: MouseEvent, tab: any) {
-//     this.resizingTab = tab;
-//     this.startX = event.clientX;
-//     this.startSize = parseFloat(tab.size);
-//     document.addEventListener('mousemove', this.onResize.bind(this));
-//     document.addEventListener('mouseup', this.onResizeEnd.bind(this));
-//   }
-
-//   onResize(event: MouseEvent) {
-//     if (this.resizingTab) {
-//       const deltaX = event.clientX - this.startX;
-//       const containerWidth = window.innerWidth;
-//       const newSize =
-//         (((this.startSize / 100) * containerWidth + deltaX) / containerWidth) *
-//         100;
-//       this.resizingTab.size = `${newSize}%`;
-//     }
-//   }
-
-//   onResizeEnd() {
-//     this.resizingTab = null;
-//     document.removeEventListener('mousemove', this.onResize.bind(this));
-//     document.removeEventListener('mouseup', this.onResizeEnd.bind(this));
-//   }
-// }

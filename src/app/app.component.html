@@ -1,78 +1,97 @@
-<!--
-<div class="window-container">
-  <div
-    class="window"
-    *ngFor="let tab of tabsService.openTabs; let i = index"
-    [ngStyle]="{ 'flex-basis': tab.size }"
-  >
-    <div class="tab-content">
-      {{ tab.content }}
+<mat-drawer-container>
+  <mat-drawer #drawer mode="over" style="min-width: 500px">
+    <ul class="list-sidenav">
+      <li
+        *ngFor="let item of tabs; let i = index"
+        (click)="openTabSidebar(item)"
+        (click)="drawer.toggle()"
+      >
+        <p>{{ item.title }}</p>
+      </li>
+    </ul>
+  </mat-drawer>
+
+  <div>
+    <ul class="group-tab mat-mdc-tab-labels">
+      <li class="tab mdc-tab mat-mdc-tab" mat-button (click)="drawer.toggle()">
+        <mat-icon
+          aria-hidden="false"
+          aria-label="Toggle menu"
+          fontIcon="menu"
+        ></mat-icon>
+      </li>
+      <li
+        class="tab mdc-tab mat-mdc-tab"
+        *ngFor="let item of tabsOpened; let i = index"
+        mwlDraggable
+        [dropData]="item"
+        (dragStart)="dragStart(i)"
+        (dragEnd)="dragEnd()"
+        mwlDroppable
+        (drop)="dropTab(i)"
+        (click)="openTab(item)"
+      >
+        <span>
+          {{ item.title | lowercase }}
+        </span>
+        <button (click)="closeTab(item)">
+          <mat-icon
+            style="font-size: 16px"
+            aria-hidden="false"
+            aria-label="close tab"
+            fontIcon="close"
+          ></mat-icon>
+        </button>
+      </li>
+    </ul>
+
+    <div class="window-container" *ngIf="tabInView.length === 0"></div>
+
+    <div class="window-container" *ngIf="tabInView.length === 1">
+      <div class="window" [ngStyle]="{ 'flex-basis': tabInView[0].size }">
+        <div class="tab-content">
+          {{ tabInView[0].content }}
+        </div>
+      </div>
     </div>
-    <div
-      *ngIf="i === 0 && tabsService.openTabs.length > 1"
-      class="resize-handle"
-      (mousedown)="onResizeStart($event, tab)"
-    ></div>
-  </div>
-</div> -->
 
-<!--
-new version with angular draggable
--->
+    <div class="window-container" *ngIf="tabInView.length > 1">
+      <div
+        class="window"
+        *ngFor="let tab of tabInView; let i = index"
+        [ngStyle]="{ 'flex-basis': tab.size }"
+      >
+        <div class="tab-content">
+          {{ tab.content }}
+        </div>
 
-<ul>
-  <li
-    *ngFor="let item of tabsOpened; let i = index"
-    mwlDraggable
-    [dropData]="item"
-    dragActiveClass="drag-active"
-    (dragStart)="dragStart(i)"
-    (dragEnd)="dragEnd()"
-    mwlDroppable
-    (drop)="dropTab(i)"
-  >
-    <!-- [touchStartLongPress]="{ delay: 300, delta: 30 }" -->
-    {{ item.title | lowercase }}
-  </li>
-</ul>
+        <div
+          class="resize-handle"
+          *ngIf="i === 0"
+          (mousedown)="resizeTabs($event)"
+        ></div>
+      </div>
+    </div>
 
-<div class="window-container" *ngIf="tabInView.length === 1">
-  <div class="window" [ngStyle]="{ 'flex-basis': tabInView[0].size }">
-    <div class="tab-content">
-      {{ tabInView[0].content }}
+    <div class="drop-zone" *ngIf="showDropZone">
+      <div
+        mwlDroppable
+        (drop)="onDropLeft($event)"
+        dragOverClass="drop-over-active"
+      ></div>
+
+      <div
+        class="drop-zone-center"
+        mwlDroppable
+        (drop)="onDropCenter($event)"
+        dragOverClass="drop-over-active"
+      ></div>
+
+      <div
+        mwlDroppable
+        (drop)="onDropRight($event)"
+        dragOverClass="drop-over-active"
+      ></div>
     </div>
   </div>
-</div>
-
-<div class="window-container" *ngIf="tabInView.length > 1">
-  <div
-    class="window"
-    *ngFor="let tab of tabInView"
-    [ngStyle]="{ 'flex-basis': tab.size }"
-  >
-    <div class="tab-content">
-      {{ tab.content }}
-    </div>
-  </div>
-</div>
-
-<div class="drop-zone" *ngIf="showDropZone">
-  <div
-    mwlDroppable
-    (drop)="onDropLeft($event)"
-    dragOverClass="drop-over-active"
-  ></div>
-
-  <div
-    class="drop-zone-center"
-    mwlDroppable
-    (drop)="onDropCenter($event)"
-    dragOverClass="drop-over-active"
-  ></div>
-
-  <div
-    mwlDroppable
-    (drop)="onDropRight($event)"
-    dragOverClass="drop-over-active"
-  ></div>
-</div>
+</mat-drawer-container>

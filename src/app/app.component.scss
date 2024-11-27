@@ -1,13 +1,10 @@
 .window-container {
   display: flex;
-  height: calc(100vh - 40px);
+  height: calc(100vh - 48px);
   position: relative;
-  border: 1px solid #82c91e;
 }
 
 .window {
-  border-right: 1px solid #ccc;
-  padding: 8px;
   overflow: hidden;
   position: relative;
   display: flex;
@@ -18,7 +15,7 @@
   flex: 1;
   padding: 8px;
   overflow: auto;
-  border: 1px solid #37b24d;
+  border: 1px solid lightgreen;
 }
 
 :host {
@@ -26,25 +23,37 @@
   flex-direction: column;
 }
 
-ul {
+.group-tab {
   display: flex;
   width: 100%;
 
   background-color: #dee2e6;
-  height: 40px;
+  height: 48px;
 
-  & > li {
+  & > .tab {
     display: flex;
-    justify-content: center;
     align-items: center;
 
     background-color: #dee2e6;
     padding: 8px 16px;
     cursor: grab;
     list-style: none;
+    gap: 16px;
   }
-  & > li:hover {
+  & > .tab:hover {
     background-color: #fff;
+  }
+  & > .tab > button {
+    background: none;
+    border: none;
+    width: 24px;
+    height: 24px;
+    padding-top: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  & > .tab > button:hover {
+    background-color: #dee2e6;
   }
 }
 
@@ -53,7 +62,7 @@ ul {
   right: 0;
   bottom: 0;
   position: fixed;
-  height: calc(100vh - 40px);
+  height: calc(100vh - 48px);
   display: flex;
   justify-content: space-between;
 
@@ -73,20 +82,32 @@ ul {
 }
 
 .drop-over-active {
-  border: dashed 1px #343a40;
   background-color: #4271d73b;
 }
 
 .drag-active {
-  z-index: 3;
+  z-index: 10;
 }
 
-// .resize-handle {
-//   width: 6px;
-//   background: #212529;
-//   cursor: col-resize;
-//   position: absolute;
-//   right: 0;
-//   top: 0;
-//   bottom: 0;
-// }
+.list-sidenav {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+
+  & > li {
+    // border-bottom: 1px solid #dee2e6;
+    padding: 8px 16px;
+    display: flex;
+    cursor: pointer;
+  }
+}
+
+.resize-handle {
+  width: 6px;
+  background: #212529;
+  cursor: col-resize;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
